@@ -1,0 +1,10 @@
+{
+  "name": "programmable-money",
+  "version": "1.0.0",
+  "description": "consensus 2023 hackathon project",
+  "main": "index.js",
+  "license": "MIT",
+  "dependencies": {
+    "@solana/web3.js": "^1.75.0"
+  }
+}
