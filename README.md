@@ -2,8 +2,8 @@
 
 ## Build
 ```bash
-cd programmable-money/src/program
-cargo build-bpf
+cd programmable-money
+yarn run build:program
 ```
 
 ## Deploy
