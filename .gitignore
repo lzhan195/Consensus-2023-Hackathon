@@ -1,2 +1,5 @@
 programmable-money/src/program/target
 Cargo.lock
+*.log
+*.err
+*/node_modules
