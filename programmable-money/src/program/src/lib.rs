@@ -1,9 +1,12 @@
+use borsh::{BorshDeserialize, BorshSerialize};
 use solana_program::{
-    account_info::AccountInfo,
-    entrypoint,
-    entrypoint::ProgramResult,
-    msg,
+    account_info::{next_account_info, AccountInfo}, 
+    entrypoint, 
+    entrypoint::ProgramResult, 
+    msg, 
+    program_error::ProgramError,
     pubkey::Pubkey,
+    clock::UnixTimestamp,
 };
 
 
@@ -14,6 +17,41 @@ fn process_instruction(
     accounts: &[AccountInfo],
     instruction_data: &[u8],
 ) -> ProgramResult {
-    msg!("Hello Solana! (From Result!)");
+
+
+    // Directly from Solana Hello World example:
+    //
+    // Iterating accounts is safer than indexing
+    let accounts_iter = &mut accounts.iter();
+
+    // Get the account to say hello to
+    let account = next_account_info(accounts_iter)?;
+
+    // The account must be owned by the program in order to modify its data
+    if account.owner != program_id {
+        msg!("Account does not have the correct program id");
+        return Err(ProgramError::IncorrectProgramId);
+    }
+
+    msg!("Debug output:");
+    msg!("Account ID: {}", account.key);
+    msg!("Executable?: {}", account.executable);
+    msg!("Lamports: {:#?}", account.lamports);
+    msg!("Debug output complete.");
+    
+    msg!("Adding 1 to sum...");
+
+    let mut pay_data = PayInfo::try_from_slice(&account.data.borrow())?;
+    pay_data.salary_amount = 1;
+    pay_data.serialize(&mut &mut account.data.borrow_mut()[..])?;
+
+    msg!("Current pay is now: {}", pay_data.salary_amount);
+
     Ok(())
+}
+
+#[derive(BorshSerialize, BorshDeserialize, Debug)]
+pub struct PayInfo{
+    pub salary_amount: u32,
+    pub pay_interval: UnixTimestamp,
 }
